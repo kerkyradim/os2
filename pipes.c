@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <sys/wait.h>
+#include <sys/types.h>
+#include <sys/file.h>
 int main(){
 
         //creating two pipes
@@ -25,7 +28,7 @@ int main(){
                 printf("error opening pipe\n");
                 exit(1);
         }
-
+for(int i=0; i<3; i++){
         pid=fork();
 
         //parent process
@@ -33,12 +36,12 @@ int main(){
                 close(pipe1fd[0]);//close read side(parent) of pipe1 
                 close(pipe2fd[1]);//close write side(parent) of pipe2
            //parent writes message
-                printf("parent writing to pipe message:%s\n",parentwrite);
+                printf("parent writing to child with pid:%d  message:%s\n",getpid(),parentwrite);
                 write(pipe1fd[1],parentwrite,sizeof(parentwrite));
 
                 //parent reads from pipe 
                 read(pipe2fd[0],readmessage,sizeof(readmessage));
-                printf("parent reads from pipe message from child:%s\n",readmessage);
+                printf("parent reads from child:%d message:%s\n",getpid(),readmessage);
 
         }else{ //child process
                 close(pipe1fd[1]);//close write side(child) of pipe1
@@ -46,13 +49,17 @@ int main(){
 
                 //child reading from pipe;
                 read(pipe1fd[0],readmessage,sizeof(readmessage));
-                printf("child is reading message:%s\n",readmessage);
+                printf("child with pid:%d is reading message:%s\n",getpid(),readmessage);
 
 
                 //child writes to pipe
-                printf ("child is writing a message:%s\n",childwrite);
+                printf ("child with pid:%d is writing a message:%s\n",getpid(),childwrite);
                 write(pipe2fd[1],childwrite,sizeof(childwrite));
+		//exit(0);
         }
+int status;
+wait(&status);
+}
 return 0;
 }       
 
