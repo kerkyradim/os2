@@ -36,12 +36,12 @@ for(int i=0; i<3; i++){
                 close(pipe1fd[0]);//close read side(parent) of pipe1 
                 close(pipe2fd[1]);//close write side(parent) of pipe2
            //parent writes message
-                printf("parent writing to child with pid:%d  message:%s\n",getpid(),parentwrite);
+                printf("parent writing to child with pid:%d  message:%s\n",pid,parentwrite);
                 write(pipe1fd[1],parentwrite,sizeof(parentwrite));
 
                 //parent reads from pipe 
                 read(pipe2fd[0],readmessage,sizeof(readmessage));
-                printf("parent reads from child:%d message:%s\n",getpid(),readmessage);
+                printf("parent reads from child:%d message:%s\n",pid,readmessage);
 
         }else{ //child process
                 close(pipe1fd[1]);//close write side(child) of pipe1
